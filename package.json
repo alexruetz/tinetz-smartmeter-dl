@@ -1,0 +1,15 @@
+{
+  "name": "tinetz-dl",
+  "version": "1.0.0",
+  "description": "Downloader for TINETZ Smart Meter Data",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alexander Ruetz",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.2",
+    "puppeteer": "^17.1.3"
+  }
+}
