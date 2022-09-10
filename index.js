@@ -13,7 +13,6 @@ require('dotenv').config();
         page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
     await page.goto('https://kundenportal.tinetz.at/powercommerce/tinetz/fo/portal/consumptionDetails?meteringCode=' + process.env.METERING_CODE);
-    await page.screenshot({ path: 'example.png' });
     await page.click('#dateType_DAY');
     const [dl] = await page.$x("//a[@title='Download Menü']");
     if (dl) {
