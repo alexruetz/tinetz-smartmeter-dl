@@ -3,7 +3,7 @@ require('dotenv').config();
 
 (async () => {
 
-    const browser = await puppeteer.launch({headless:false});
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto('https://kundenportal.tinetz.at/powercommerce/tinetz/fo/portal/loginProcess');
     await page.type("#login", process.env.USERNAME);
