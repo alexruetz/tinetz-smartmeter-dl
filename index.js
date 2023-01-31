@@ -1,6 +1,14 @@
 const puppeteer = require('puppeteer');
 require('dotenv').config();
 
+const args = process.argv.slice(1)
+var days = 1;
+if (args[1]) {
+    console.log(args);
+    days = Number(args[1])
+}
+var daysDownloaded = 0;
+
 (async () => {
 
     const browser = await puppeteer.launch({headless: false});
@@ -20,12 +28,18 @@ require('dotenv').config();
     await page.waitForSelector('#icon-bar-dropdown', {
         visible: true,
       });
-    await page.click('.fa-caret-square-left');
-    //await page.click('#dateType_DAY');
-    await page.click('.fa-download');
-    const [button] = await page.$x("//a[contains(., 'Export als CSV-Datei')]");
-    button.click()
-    await delay(5000); 
+
+      await page.$eval("input[value='Tag']", elem => elem.click())
+      do {
+        await page.click('.fa-caret-square-left');
+
+        await page.click('.fa-download');
+        const [button] = await page.$x("//a[contains(., 'Export als CSV-Datei')]");
+        button.click()
+        await delay(1000); 
+        daysDownloaded ++;
+      } while (daysDownloaded < days);
+   
     await browser.close();
 })();
 
