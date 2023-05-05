@@ -15,15 +15,18 @@ var daysDownloaded = 0;
     
     const page = await browser.newPage();
     await page.goto('https://kundenportal.tinetz.at/powercommerce/tinetz/fo/portal/loginProcess');
+    await new Promise(r => setTimeout(r, 5000));
     await page.click('#modalSave');
+    await new Promise(r => setTimeout(r, 1000));
     await page.type("#login", process.env.USERNAME);
     await page.type("#password", process.env.PASSWORD);
     await Promise.all([
         page.click('#loginButton'),
+        page.click('#loginButton'),
         page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
     await page.goto('https://kundenportal.tinetz.at/powercommerce/tinetz/fo/portal/consumptionDetails?meteringCode=' + process.env.METERING_CODE, {timeout: 5000});
-    await new Promise(r => setTimeout(r, 5000));
+    await new Promise(r => setTimeout(r, 2000));
     
     await page.waitForSelector('#icon-bar-dropdown', {
         visible: true,
