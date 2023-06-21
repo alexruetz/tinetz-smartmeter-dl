@@ -7,5 +7,6 @@ Enviroment Variables needed:
 * USERNAME
 * PASSWORD
 * METERING_CODE
+* DOWNLOAD_DIR
 
 Metering Code can be found in the portal URL where the usage Data of your smart meter is displayed
