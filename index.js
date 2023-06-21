@@ -14,6 +14,12 @@ var daysDownloaded = 0;
     const browser = await puppeteer.launch({headless: false});
     
     const page = await browser.newPage();
+    const client = await page.target().createCDPSession()
+    await client.send('Page.setDownloadBehavior', {
+    behavior: 'allow',
+    downloadPath: process.env.DOWNLOAD_DIR,
+    })
+
     await page.goto('https://kundenportal.tinetz.at/powercommerce/tinetz/fo/portal/loginProcess');
     await new Promise(r => setTimeout(r, 5000));
     await page.click('#modalSave');
