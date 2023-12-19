@@ -11,13 +11,15 @@ var daysDownloaded = 0;
 
 (async () => {
 
-    const browser = await puppeteer.launch({headless: false});
-    
+    const browser = await puppeteer.launch({
+        headless: true
+    });
+
     const page = await browser.newPage();
     const client = await page.target().createCDPSession()
     await client.send('Page.setDownloadBehavior', {
-    behavior: 'allow',
-    downloadPath: process.env.DOWNLOAD_DIR,
+        behavior: 'allow',
+        downloadPath: process.env.DOWNLOAD_DIR,
     })
 
     await page.goto('https://kundenportal.tinetz.at/powercommerce/tinetz/fo/portal/loginProcess');
@@ -31,29 +33,29 @@ var daysDownloaded = 0;
         page.click('#loginButton'),
         page.waitForNavigation({ waitUntil: 'networkidle0' }),
     ]);
-    await page.goto('https://kundenportal.tinetz.at/powercommerce/tinetz/fo/portal/consumptionDetails?meteringCode=' + process.env.METERING_CODE, {timeout: 5000});
+    await page.goto('https://kundenportal.tinetz.at/powercommerce/tinetz/fo/portal/consumptionDetails?meteringCode=' + process.env.METERING_CODE, { timeout: 5000 });
     await new Promise(r => setTimeout(r, 2000));
-    
+
     await page.waitForSelector('#icon-bar-dropdown', {
         visible: true,
-      });
+    });
 
-      await page.$eval("input[value='Tag']", elem => elem.click())
-      do {
+    await page.$eval("input[value='Tag']", elem => elem.click())
+    do {
         await page.click('.fa-caret-square-left');
 
         await page.click('.fa-download');
         const [button] = await page.$x("//a[contains(., 'Export als CSV-Datei')]");
         button.click()
-        await delay(1000); 
-        daysDownloaded ++;
-      } while (daysDownloaded < days);
-   
+        await delay(1000);
+        daysDownloaded++;
+    } while (daysDownloaded < days);
+
     await browser.close();
 })();
 
 function delay(time) {
-    return new Promise(function(resolve) { 
+    return new Promise(function (resolve) {
         setTimeout(resolve, time)
     });
 }
