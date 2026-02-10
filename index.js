@@ -36,7 +36,7 @@ async function safeClick(page, selector, options = {}) {
     let browser;
     try {
         browser = await puppeteer.launch({
-            headless: false
+            headless: process.env.HEADLESS || true
         });
 
         const page = await browser.newPage();
