@@ -8,6 +8,8 @@ if (args[1]) {
     console.log(args);
     days = Number(args[1])
 }
+
+console.log(`Try to load csv for ${days} days`)
 var daysDownloaded = 0;
 
 // Timeout configs
@@ -90,7 +92,7 @@ async function safeClick(page, selector, options = {}) {
             
             await safeClick(page, '.fa-caret-square-left', { waitAfter: 1500 });
             await waitForPageStable(page);
-            console.log('Zum vorherigen Tag gewechselt');
+            console.log('navigate to past day');
 
             await safeClick(page, '.fa-download', { waitAfter: 500 });
             
@@ -107,7 +109,7 @@ async function safeClick(page, selector, options = {}) {
             });
             
             if (!clicked) {
-                throw new Error('CSV-Download-Link nicht gefunden');
+                throw new Error('Did not find csv download link');
             }
 
             await delay(2000);
@@ -115,11 +117,11 @@ async function safeClick(page, selector, options = {}) {
             
         } while (daysDownloaded < days);
 
-        console.log(`Erfolgreich ${daysDownloaded} Tage heruntergeladen`);
+        console.log(`downloaded ${daysDownloaded} days successful`);
         await browser.close();
         
     } catch (error) {
-        console.error('Fehler aufgetreten:', error.message);
+        console.error('error occured:', error.message);
         if (browser) {
             await browser.close();
         }
