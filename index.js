@@ -112,7 +112,8 @@ async function safeClick(page, selector, options = {}) {
                 throw new Error('Did not find csv download link');
             }
 
-            await delay(2000);
+            // todo: more intelligent solution ... ok for now
+            await delay(5000);
             daysDownloaded++;
             
         } while (daysDownloaded < days);
