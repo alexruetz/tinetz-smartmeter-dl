@@ -9,6 +9,11 @@ if (args[1]) {
     days = Number(args[1])
 }
 
+if (days <= 0) {
+    console.error('Error: Number of days must be positive');
+    process.exit(1);
+}
+
 console.log(`Try to load csv for ${days} days`)
 var daysDownloaded = 0;
 
