@@ -46,10 +46,46 @@ async function safeClick(page, selector, options = {}) {
         page.setDefaultNavigationTimeout(CONFIG.navigationTimeout);
 
         const client = await page.target().createCDPSession()
-        await client.send('Page.setDownloadBehavior', {
+        await client.send('Browser.setDownloadBehavior', {
             behavior: 'allow',
             downloadPath: process.env.DOWNLOAD_DIR,
+            eventsEnabled: true,
         })
+
+        // Download-Tracking
+        let downloadInProgress = false;
+        let downloadComplete = false;
+        
+        client.on('Browser.downloadWillBegin', () => {
+            downloadInProgress = true;
+            downloadComplete = false;
+        });
+        
+        client.on('Browser.downloadProgress', (event) => {
+            if (event.state === 'completed') {
+                downloadComplete = true;
+                downloadInProgress = false;
+            } else if (event.state === 'canceled') {
+                downloadInProgress = false;
+            }
+        });
+
+        async function waitForDownload(timeout = 30000) {
+            const startTime = Date.now();
+            while (!downloadInProgress && !downloadComplete) {
+                if (Date.now() - startTime > timeout) {
+                    throw new Error('Download did not start within timeout');
+                }
+                await delay(100);
+            }
+            while (!downloadComplete) {
+                if (Date.now() - startTime > timeout) {
+                    throw new Error('Download did not complete within timeout');
+                }
+                await delay(100);
+            }
+            downloadComplete = false;
+        }
 
         // login
         await page.goto('https://kundenportal.tinetz.at', { 
@@ -112,8 +148,7 @@ async function safeClick(page, selector, options = {}) {
                 throw new Error('Did not find csv download link');
             }
 
-            // todo: more intelligent solution ... ok for now
-            await delay(5000);
+            await waitForDownload();
             daysDownloaded++;
             
         } while (daysDownloaded < days);
