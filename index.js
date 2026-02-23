@@ -43,14 +43,21 @@ async function safeClick(page, selector, options = {}) {
     let browser;
     try {
         browser = await puppeteer.launch({
-            headless: process.env.HEADLESS || true
+            headless: process.env.HEADLESS !== 'false',
+            executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu'
+            ]
         });
 
         const page = await browser.newPage();
         page.setDefaultTimeout(CONFIG.defaultTimeout);
         page.setDefaultNavigationTimeout(CONFIG.navigationTimeout);
 
-        const client = await page.target().createCDPSession()
+        const client = await browser.target().createCDPSession()
         await client.send('Browser.setDownloadBehavior', {
             behavior: 'allow',
             downloadPath: process.env.DOWNLOAD_DIR,
