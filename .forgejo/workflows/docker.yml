@@ -1,0 +1,23 @@
+name: Docker
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and push Docker image
+        run: |
+          REGISTRY="${{ github.server_url }}"
+          REGISTRY="${REGISTRY#https://}"
+          REGISTRY="${REGISTRY#http://}"
+          IMAGE="${REGISTRY}/${{ github.repository }}"
+
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login "${REGISTRY}" -u "${{ github.actor }}" --password-stdin
+          docker build -t "${IMAGE}:latest" -t "${IMAGE}:${{ github.sha }}" .
+          docker push "${IMAGE}:latest"
+          docker push "${IMAGE}:${{ github.sha }}"
